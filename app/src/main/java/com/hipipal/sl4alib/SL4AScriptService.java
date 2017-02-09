@@ -38,7 +38,6 @@ import com.googlecode.android_scripting.interpreter.InterpreterUtils;
 import com.googlecode.android_scripting.interpreter.html.HtmlActivityTask;
 import com.googlecode.android_scripting.interpreter.html.HtmlInterpreter;
 import com.googlecode.android_scripting.jsonrpc.RpcReceiverManager;
-import com.hipipal.sl4alib.R;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +46,7 @@ import java.util.concurrent.CountDownLatch;
 
 /**
  * A service that allows scripts and the RPC server to run in the background.
- * 
+ *
  * @author Alexey Reznichenko (alexey.reznichenko@gmail.com)
  * @author Manuel Naranjo (manuel@aircable.net)
  */
@@ -59,13 +58,13 @@ public class SL4AScriptService extends ForegroundService {
 	protected InterpreterConfiguration mInterpreterConfiguration;
 	protected RpcReceiverManager mFacadeManager;
 	protected AndroidProxy mProxy;
-    
+
 	public class LocalBinder extends Binder {
 		public SL4AScriptService getService() {
 			return SL4AScriptService.this;
 		}
 	}
-	
+
 	public SL4AScriptService() {
 		super(NOTIFICATION_ID);
 		mBinder = new LocalBinder();
@@ -98,7 +97,7 @@ public class SL4AScriptService extends ForegroundService {
 				startActivity(i);
 			} else {
 				Log.e(this, "Cannot find an interpreter for script "
-								+ fileName);
+						+ fileName);
 			}
 			stopSelf(startId);
 			return;
@@ -140,26 +139,26 @@ public class SL4AScriptService extends ForegroundService {
 	RpcReceiverManager getRpcReceiverManager() throws InterruptedException {
 		mLatch.await();
 		if (mFacadeManager==null) { // Facade manage may not be available on startup.
-		mFacadeManager = mProxy.getRpcReceiverManagerFactory()
-		.getRpcReceiverManagers().get(0);
+			mFacadeManager = mProxy.getRpcReceiverManagerFactory()
+					.getRpcReceiverManagers().get(0);
 		}
 		return mFacadeManager;
 	}
-	
-    @SuppressWarnings("deprecation")
+
+	@SuppressWarnings("deprecation")
 	@Override
 	protected Notification createNotification() {
 		Notification notification =
-	        new Notification(R.drawable.icon_notify, "loading", System.currentTimeMillis());
-	    // This contentIntent is a noop.
-	    PendingIntent contentIntent = PendingIntent.getService(this, 0, new Intent(), 0);
-	    notification.contentIntent = contentIntent;
-	    //notification.setLatestEventInfo(this, this.getString(R.string.app_name), this.getString(R.string.loading), contentIntent);
-	    notification.flags = Notification.FLAG_AUTO_CANCEL;
+				new Notification(R.drawable.icon_notify, this.getString(R.string.loading), System.currentTimeMillis());
+		// This contentIntent is a noop.
+		PendingIntent contentIntent = PendingIntent.getService(this, 0, new Intent(), 0);
+		notification.contentIntent = contentIntent;
+		//notification.setLatestEventInfo(this, this.getString(R.string.app_name), this.getString(R.string.loading), contentIntent);
+		notification.flags = Notification.FLAG_AUTO_CANCEL;
 		return notification;
 	}
 
-    protected boolean needsToBeUpdated(String filename, InputStream content) {
+	protected boolean needsToBeUpdated(String filename, InputStream content) {
 		File script = new File(filename);
 		FileInputStream fin;
 		Log.d("Checking if " + filename + " exists");
@@ -188,7 +187,7 @@ public class SL4AScriptService extends ForegroundService {
 		return false;
 	}
 
-    protected void copyResourcesToLocal() {
+	protected void copyResourcesToLocal() {
 		String name, sFileName;
 		InputStream content;
 		R.raw a = new R.raw();

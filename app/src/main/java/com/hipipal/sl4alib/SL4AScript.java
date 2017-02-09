@@ -1,7 +1,5 @@
 package com.hipipal.sl4alib;
 
-import com.hipipal.sl4alib.R;
-
 import android.content.Context;
 import android.content.res.Resources;
 

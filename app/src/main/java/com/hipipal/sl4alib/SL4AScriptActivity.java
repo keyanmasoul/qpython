@@ -20,47 +20,46 @@ import com.hipipal.sl4alib.R;
  */
 public class SL4AScriptActivity extends Activity {
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    if (Constants.ACTION_LAUNCH_SCRIPT_FOR_RESULT.equals(getIntent().getAction())) {
-      setTheme(android.R.style.Theme_Dialog);
-      setContentView(R.layout.dialog);
-      ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-        	Log.d("SL4AScriptApp", "onServiceConnected");
-          SL4AScriptService scriptService = ((SL4AScriptService.LocalBinder) service).getService();
-          try {
-            RpcReceiverManager manager = scriptService.getRpcReceiverManager();
-            ActivityResultFacade resultFacade = manager.getReceiver(ActivityResultFacade.class);
-            resultFacade.setActivity(SL4AScriptActivity.this);
-          } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-          }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (!Constants.ACTION_LAUNCH_SCRIPT_FOR_RESULT.equals(getIntent().getAction())) {
+            setContentView(R.layout.dialog);
+            ServiceConnection connection = new ServiceConnection() {
+                @Override
+                public void onServiceConnected(ComponentName name, IBinder service) {
+                    Log.d("SL4AScriptApp", "onServiceConnected");
+                    SL4AScriptService scriptService = ((SL4AScriptService.LocalBinder) service).getService();
+                    try {
+                        RpcReceiverManager manager = scriptService.getRpcReceiverManager();
+                        ActivityResultFacade resultFacade = manager.getReceiver(ActivityResultFacade.class);
+                        resultFacade.setActivity(SL4AScriptActivity.this);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                @Override
+                public void onServiceDisconnected(ComponentName name) {
+                    // Ignore.
+                }
+            };
+            //Log.d("SL4AScriptApp", "bindService 1");
+
+            bindService(new Intent(this, SL4AScriptService.class), connection, Context.BIND_AUTO_CREATE);
+            //Log.d("SL4AScriptApp", "bindService 2");
+
+            startService(new Intent(this, SL4AScriptService.class));
+        } else {
+            //Log.d("SL4AScriptApp", "bindService 3");
+
+            MNApp application = (MNApp) getApplication();
+            if (application.readyToStart()) {
+                startService(new Intent(this, SL4AScriptService.class));
+            }
+            //Log.d("SL4AScriptApp", "bindService 4");
+
+            finish();
         }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-          // Ignore.
-        }
-      };
-  	//Log.d("SL4AScriptApp", "bindService 1");
-
-      bindService(new Intent(this, SL4AScriptService.class), connection, Context.BIND_AUTO_CREATE);
-    	//Log.d("SL4AScriptApp", "bindService 2");
-
-      startService(new Intent(this, SL4AScriptService.class));
-    } else {
-    	//Log.d("SL4AScriptApp", "bindService 3");
-
-    	MNApp application = (MNApp) getApplication();
-      if (application.readyToStart()) {
-        startService(new Intent(this, SL4AScriptService.class));
-      }
-  	//Log.d("SL4AScriptApp", "bindService 4");
-
-      finish();
     }
-  }
 }

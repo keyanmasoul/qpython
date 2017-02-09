@@ -13,9 +13,9 @@
     <application
         android:name=".MNApp"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light">
         <activity
             android:name=".SL4AScriptActivity"
@@ -26,6 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SL4ADialogActivity"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".SL4AScriptService" />
     </application>
 
 </manifest>

@@ -51,7 +51,7 @@ public class SL4ADialogActivity extends Activity {
     AlertDialog.Builder dialog = new AlertDialog.Builder(this);
     dialog.setTitle(String.format("%s is not installed.", interpreter));
     dialog.setMessage(String
-        .format("Do you want to download and install APK for %s ?", interpreter));
+            .format("Do you want to download and install APK for %s ?", interpreter));
 
     DialogInterface.OnClickListener buttonListener = new DialogInterface.OnClickListener() {
       @Override

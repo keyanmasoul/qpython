@@ -14,6 +14,7 @@ import com.googlecode.android_scripting.interpreter.InterpreterConfiguration.Con
 import com.googlecode.android_scripting.trigger.TriggerRepository;
 import com.quseit.common.CrashHandler;
 import com.quseit.util.NAction;
+import com.quseit.util.NUtil;
 //import com.zuowuxuxi.common.CrashHandler;
 //import com.zuowuxuxi.util.NAction;
 //import com.zuowuxuxi.util.NUtil;
@@ -55,8 +56,8 @@ public class MNApp extends Application implements ConfigurationObserver {
     }
 
     public void trackPageView(String page) {
-        if (tracker != null) {
-            tracker.trackPageView("/" + "-" + page);
+        if (tracker!=null) {
+            tracker.trackPageView("/"+ NUtil.getVersinoCode(getApplicationContext())+"-"+page);
         }
     }
 

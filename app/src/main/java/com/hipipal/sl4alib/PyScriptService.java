@@ -17,7 +17,7 @@ import com.android.python27.process.MyScriptProcess;
 import com.googlecode.android_scripting.AndroidProxy;
 import com.googlecode.android_scripting.jsonrpc.RpcReceiverManager;
 import com.googlecode.android_scripting.interpreter.InterpreterConfiguration;
-//import com.zuowuxuxi.util.NStorage;
+import com.quseit.util.NStorage;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,25 +35,25 @@ public class PyScriptService extends Service {
 	private final IBinder mBinder;
 	@SuppressWarnings("unused")
 	private MyScriptProcess myScriptProcess;
-	
+
 	@SuppressWarnings("unused")
 	private static PyScriptService instance;
 	@SuppressWarnings("unused")
 	private boolean killMe;
 	public static String scriptName;
-	  
+
 	private InterpreterConfiguration mInterpreterConfiguration = null;
 	private RpcReceiverManager mFacadeManager;
-    private AndroidProxy mProxy;
-    
-    private static Context context = null;
-    @SuppressWarnings("unused")
+	private AndroidProxy mProxy;
+
+	private static Context context = null;
+	@SuppressWarnings("unused")
 	private int mStartId;
-    static {
-      instance = null;
-    }
-    
-    // ------------------------------------------------------------------------------------------------------
+	static {
+		instance = null;
+	}
+
+	// ------------------------------------------------------------------------------------------------------
 
 	public class LocalBinder extends Binder {
 		public PyScriptService getService() {
@@ -61,7 +61,7 @@ public class PyScriptService extends Service {
 		}
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
 	@Override
 	public void onDestroy() {
@@ -70,11 +70,11 @@ public class PyScriptService extends Service {
 		if (mProxy!=null) {
 			mProxy.shutdown();
 		}
-		
+
 		super.onDestroy();
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
 	public PyScriptService() {
 //		super(NOTIFICATION_ID);
@@ -83,41 +83,41 @@ public class PyScriptService extends Service {
 		mBinder = new LocalBinder();
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
-    public static Context getAppContext() {
-        return PyScriptService.context;
-    }
-    
-    // ------------------------------------------------------------------------------------------------------
+	public static Context getAppContext() {
+		return PyScriptService.context;
+	}
+
+	// ------------------------------------------------------------------------------------------------------
 
 	@Override
 	public void onCreate() {
 		Log.d(TAG, "onCreate");
 		super.onCreate();
 		PyScriptService.context = getApplicationContext();
-		
+
 		// clear before run
         /*File logFile = new File( Environment.getExternalStorageDirectory()+"/"+CONF.BASE_PATH+"/"+scriptName.substring(scriptName.lastIndexOf("/")+1)+".log" );
         if (logFile.exists()) {
         	logFile.delete();
         }
-		killProcess();	*/	
+		killProcess();	*/
 		// River Modify
 		instance = this;
-	    this.killMe = false;
+		this.killMe = false;
 
 		new startMyAsyncTask().execute(101);
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
 	@SuppressWarnings("deprecation")
 	@Override
@@ -125,23 +125,23 @@ public class PyScriptService extends Service {
 		super.onStart(intent, startId);
 	}
 
-    // ------------------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------------------------
 
 	public class startMyAsyncTask extends AsyncTask<Integer, Integer, Boolean> {
 		@Override
 		protected void onPreExecute() {
 		}
-	
+
 		@Override
-		protected Boolean doInBackground(Integer... params) {	    
+		protected Boolean doInBackground(Integer... params) {
 			startMyMain(params[0]);
 			return true;
 		}
-	
+
 		@Override
 		protected void onProgressUpdate(Integer... values) {
 		}
-	
+
 		@Override
 		protected void onPostExecute(Boolean installStatus) {
 			Log.d(TAG, "startMyAsyncTask:onPostExecute");
@@ -155,9 +155,9 @@ public class PyScriptService extends Service {
 		if (scriptName == null) {
 			scriptName = this.getFilesDir().getAbsolutePath() + "/" + GlobalConstants.PYTHON_MAIN_SCRIPT_NAME;
 		}
-		
+
 		File script = new File(scriptName);
-		
+
 		// arguments
 		ArrayList<String> args = new ArrayList<String>();
 		args.add(scriptName);
@@ -166,11 +166,11 @@ public class PyScriptService extends Service {
 		// env var
 		Map<String, String> environmentVariables = null;
 		environmentVariables = new HashMap<String, String>();
-	    //environmentVariables.put("PYTHONPATH", this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7/lib-dynload" + ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7"+ ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python27.zip"+ ":" +Environment.getExternalStorageDirectory().getAbsolutePath()+ "/"  + this.getPackageName() + "/extras/site-packages" );
-	    //environmentVariables.put("TEMP", Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + this.getPackageName() + "/extras/tmp");
-	    //environmentVariables.put("PYTHONHOME", this.getFilesDir().getAbsolutePath() + "/python");
-	    //environmentVariables.put("LD_LIBRARY_PATH", this.getFilesDir().getAbsolutePath() + "/python/lib" + ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7/lib-dynload");			
-		
+		//environmentVariables.put("PYTHONPATH", this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7/lib-dynload" + ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7"+ ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python27.zip"+ ":" +Environment.getExternalStorageDirectory().getAbsolutePath()+ "/"  + this.getPackageName() + "/extras/site-packages" );
+		//environmentVariables.put("TEMP", Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + this.getPackageName() + "/extras/tmp");
+		//environmentVariables.put("PYTHONHOME", this.getFilesDir().getAbsolutePath() + "/python");
+		//environmentVariables.put("LD_LIBRARY_PATH", this.getFilesDir().getAbsolutePath() + "/python/lib" + ":" + this.getFilesDir().getAbsolutePath() + "/python/lib/python2.7/lib-dynload");
+
 		//File pythonBinary = new File(this.getFilesDir().getAbsolutePath() + "/python/bin/python");
 		//File pythonBinary = new File("/system/bin/id");
 		// launch script
@@ -178,49 +178,49 @@ public class PyScriptService extends Service {
 			mProxy = new AndroidProxy(this, null, true);
 
 			mProxy.startLocal();
-			//NStorage.setSP(getAppContext(), "sl4a.hostname", mProxy.getAddress().getHostName());
-			//NStorage.setSP(getAppContext(), "sl4a.port", ""+mProxy.getAddress().getPort());
-			//NStorage.setSP(getAppContext(), "sl4a.secue", mProxy.getSecret());
-			
+			NStorage.setSP(getAppContext(), "sl4a.hostname", mProxy.getAddress().getHostName());
+			NStorage.setSP(getAppContext(), "sl4a.port", ""+mProxy.getAddress().getPort());
+			NStorage.setSP(getAppContext(), "sl4a.secue", mProxy.getSecret());
+
 			Log.d(TAG, "startMyMain:"+mProxy.getAddress().getHostName()+":"+mProxy.getAddress().getPort()+":"+mProxy.getSecret());
 			mLatch.countDown();
-			
+
 			//Intent intent1 = new Intent(".PythonActivity");
 			//sendBroadcast(intent1);
-		      
+
 			myScriptProcess = MyScriptProcess.launchScript(this, script, mInterpreterConfiguration, mProxy, new Runnable() {
 				@Override
 				public void run() {
 					Log.d(TAG, "myScriptProcess");
 					mProxy.shutdown();
-					stopSelf(startId);						
+					stopSelf(startId);
 					// hard force restart
-	//				if (!ScriptService.this.killMe) {
-	//					startMyMain();				        	
-	//				}
+					//				if (!ScriptService.this.killMe) {
+					//					startMyMain();
+					//				}
 				}
 			}, script.getParent(),  Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + this.getPackageName(), args, environmentVariables, null);
 		} catch (Exception e) {
-			
+
 		}
 	}
-	
-    // ------------------------------------------------------------------------------------------------------
+
+	// ------------------------------------------------------------------------------------------------------
 
 	RpcReceiverManager getRpcReceiverManager() throws InterruptedException {
 		mLatch.await();
-		
+
 		if (mFacadeManager==null) { // Facade manage may not be available on startup.
 			mFacadeManager = mProxy.getRpcReceiverManagerFactory()
-				.getRpcReceiverManagers().get(0);
+					.getRpcReceiverManagers().get(0);
 		}
 		return mFacadeManager;
 	}
-	
+
 	public void updateNotify(Message msg) {
 		updatePositionHandler.sendMessage(msg);
 	}
-	
+
 	@SuppressLint("HandlerLeak")
 	private Handler updatePositionHandler = new Handler() {
 		@Override
@@ -229,5 +229,5 @@ public class PyScriptService extends Service {
 			String file = (String)msg.obj;
 			//updateNotification(msg.what, file);
 		}
-	};	
+	};
 }
